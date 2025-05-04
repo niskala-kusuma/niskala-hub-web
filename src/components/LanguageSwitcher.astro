@@ -1,0 +1,14 @@
+---
+const { currentLang } = Astro.props;
+
+const otherLang = currentLang === 'en' ? 'id' : 'en';
+const otherLangLabel = currentLang === 'en' ? 'Id' : 'En';
+const currentPath = Astro.url.pathname;
+const pathWithoutLang = currentPath.replace(/^\/(en|id)/, '');
+
+const targetHref = `/${otherLangLabel}`;
+---
+
+<a href={targetHref} class="lang-switch text-sm underline">
+  {otherLangLabel}
+</a>

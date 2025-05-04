@@ -1,6 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
 import type { iconPaths } from './IconPaths';
 
 /** Main menu items */
@@ -27,6 +28,7 @@ const isCurrentPage = (href: string) => {
 	if (pathname.at(-1) !== '/') pathname += '/';
 	return pathname === href || (href !== '/' && pathname.startsWith(href));
 };
+const { lang } = Astro.props;
 ---
 
 <nav>
@@ -98,6 +100,10 @@ const isCurrentPage = (href: string) => {
 			<div class="theme-toggle">
 				<ThemeToggle />
 			</div>
+			<div class="lang-switcher">
+				<LanguageSwitcher currentLang={ lang } />
+			</div>
+			/..
 		</div>
 	</div>
 </nav>

@@ -6,24 +6,29 @@
 import MainHead from '../components/MainHead.astro';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
+import ChatAI from '../components/ChatAI.astro'
 
 interface Props {
 	title?: string | undefined;
 	description?: string | undefined;
+	lang: 'en' | 'id';
 }
+const { lang, title, description } = Astro.props;
 
-const { title, description } = Astro.props;
 ---
-
-<html lang="en">
+<!DOCTYPE html>
+<html lang={lang}>
 	<head>
 		<MainHead title={title} description={description} />
+		<link rel="alternate" hreflang="en" href="https://niskala.com/en/" />
+		<link rel="alternate" hreflang="id" href="https://niskala.com/id/" />
 	</head>
 	<body>
 		<div class="stack backgrounds">
 			<Nav />
 			<slot />
 			<Footer />
+			<ChatAI />
 		</div>
 
 		<script>

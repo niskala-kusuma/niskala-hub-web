@@ -1,0 +1,200 @@
+---
+import Icon from '../components/Icon.astro';
+---
+
+<!-- Chat AI Component (Plain CSS) -->
+<button id="chat-toggle" aria-label="Open Chat AI">
+  <Icon icon="chat-quote" size="1.5em" />
+</button>
+
+<aside id="chat-sidebar">
+  <header id="chat-header">
+    <h2>Chat AI</h2>
+    <button id="chat-close" aria-label="Close Chat AI">
+      <Icon icon="x" size="1.25em" />
+    </button>
+  </header>
+
+  <div id="chat-messages">
+    <!-- Messages appear here -->
+  </div>
+
+  <form id="chat-form">
+    <input name="prompt" id="chat-input" type="text" placeholder="Type your message…" autocomplete="off" />
+    <button id="chat-send" type="submit">Send</button>
+  </form>
+</aside>
+
+<script type="module" client:load>
+  const form = document.getElementById('chat-form');
+  const input = document.getElementById('chat-input');
+  const output = document.getElementById('chat-messages');
+  
+  if (form && input && output) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const text = input.value.trim();
+      if (!text) return;
+  
+      // tampilkan user bubble…
+      const userBubble = document.createElement('div');
+      userBubble.textContent = text;
+      output.appendChild(userBubble);
+      input.value = '';
+  
+      // fetch ke API
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: text }),
+      });
+      const { reply } = await res.json();
+  
+      // tampilkan bot bubble…
+      const botBubble = document.createElement('div');
+      botBubble.textContent = reply;
+      output.appendChild(botBubble);
+    });
+  }
+  </script>
+
+<style>
+  /* common transitions */
+  #chat-sidebar,
+  .chat-message,
+  #chat-toggle,
+  #chat-send,
+  #chat-input {
+    transition: transform var(--theme-transition), opacity var(--theme-transition), background-color var(--theme-transition), color var(--theme-transition);
+  }
+
+  /* Toggle Button Bubble */
+  #chat-toggle {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(6px);
+    color: var(--accent-color);
+    border: none;
+    border-radius: 50%;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+  }
+  .theme-dark #chat-toggle {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: var(--on-accent-color);
+  }
+
+  /* Sidebar as Bubble Popup */
+  #chat-sidebar {
+    position: fixed;
+    bottom: 76px;
+    right: 16px;
+    width: 300px;
+    height: 50vh;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    box-shadow: var(--shadow-2xl);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0);
+    opacity: 0;
+    transform-origin: bottom right;
+    z-index: 1000;
+  }
+  #chat-sidebar.open {
+    transform: scale(1);
+    opacity: 1;
+  }
+  .theme-dark #chat-sidebar {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+
+  /* Header */
+  #chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .theme-dark #chat-header h2,
+  .theme-dark #chat-close svg {
+    color: #fff;
+  }
+
+  /* Messages */
+  #chat-messages {
+    flex: 1;
+    padding: 12px 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* Form */
+  #chat-form {
+    display: flex;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-color);
+  }
+  #chat-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px 0 0 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+  }
+  .theme-dark #chat-input {
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+    border-color: rgba(255,255,255,0.2);
+  }
+  #chat-send {
+    padding: 8px 16px;
+    border: none;
+    background-color: var(--accent-color);
+    color: var(--on-accent-color);
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+  }
+  .theme-dark #chat-send {
+    background-color: var(--accent-text-over);
+    color: #000;
+  }
+
+  /* Message Bubbles */
+  .chat-message {
+    max-width: 80%;
+    padding: 8px;
+    border-radius: 8px;
+  }
+  .chat-message.user {
+    align-self: flex-end;
+    background-color: var(--msg-user-bg);
+    color: var(--msg-user-text);
+  }
+  .chat-message.bot {
+    align-self: flex-start;
+    background-color: var(--msg-bot-bg);
+    color: var(--msg-bot-text);
+  }
+  .theme-dark .chat-message.user {
+    background-color: rgba(255,255,255,0.1);
+    color: #fff;
+  }
+  .theme-dark .chat-message.bot {
+    background-color: rgba(255,255,255,0.2);
+    color: #fff;
+  }
+</style>
